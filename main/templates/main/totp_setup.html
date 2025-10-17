@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>2FA Setup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+</head>
+<body class="dash-wrap">
+  <div class="topbar">
+    <div class="title">Set up 2FA</div>
+    <div class="user"><a style="color:#f59e0b" href="/api/settings/">Back</a></div>
+  </div>
+  <div class="container" style="padding:22px; color:#e5e7eb;">
+    <div class="tile" style="max-width:520px; text-align:center;">
+      <p class="hint">Scan this QR in Google Authenticator, then enter the 6‑digit code to verify.</p>
+      <img style="margin:12px auto; background:#fff; padding:10px; border-radius:10px;" src="data:image/png;base64,{{ qr_code }}" alt="TOTP QR">
+      <div>Secret: <code>{{ secret }}</code></div>
+      <a class="btn-primary" style="margin-top:12px; display:inline-block;" href="/api/2fa/verify/">Verify Code</a>
+    </div>
+  </div>
+</body>
+</html>
+

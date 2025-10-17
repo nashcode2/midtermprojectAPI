@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}?v={{ timestamp|default:'1' }}">
+    <style>
+        body { font-family: Arial; margin: 0; background-color: #f5f6f8; }
+        h1 { text-align: center; margin: 24px 0; }
+        input { padding: 10px; width: 70%; margin-right: 10px; border-radius: 8px; border: 1px solid #d1d5db; }
+        img { margin-top: 10px; max-width: 220px; }
+        .logout { text-align: center; margin: 16px 0; }
+        
+        /* FORCE VISIBLE CHANGES */
+        .hero h1 { 
+            font-size: 32px !important; 
+            background: linear-gradient(135deg, #7c3aed, #f59e0b) !important; 
+            -webkit-background-clip: text !important; 
+            -webkit-text-fill-color: transparent !important; 
+            background-clip: text !important;
+            text-align: center !important;
+        }
+        .hero p { 
+            text-align: center !important; 
+            font-size: 16px !important; 
+            margin: 12px 0 20px !important; 
+        }
+        .hero-badges { 
+            display: flex !important; 
+            justify-content: center !important; 
+            gap: 12px !important; 
+            flex-wrap: wrap !important; 
+            margin-top: 16px !important; 
+        }
+        .badge { 
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(245, 158, 11, 0.2)) !important; 
+            border: 1px solid rgba(124, 58, 237, 0.3) !important; 
+            border-radius: 20px !important; 
+            padding: 6px 12px !important; 
+            font-size: 12px !important; 
+            font-weight: 600 !important; 
+            color: #f59e0b !important; 
+        }
+    </style>
+</head>
+<body class="dash-wrap with-sidebar">
+    <div id="sidebar" class="sidebar">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 6px 10px 6px;">
+            <div style="font-weight:800; color:#e5e7eb; padding:0 6px;" class="label">Menu</div>
+            <button id="toggleBtn" class="toggle-btn" onclick="toggleSidebar()">⇔</button>
+        </div>
+        <a href="/api/dashboard/"><span>🏠</span> <span class="label">Home</span></a>
+        <a href="/api/profile/"><span>👤</span> <span class="label">Profile</span></a>
+        <a href="/api/settings/"><span>⚙️</span> <span class="label">Settings</span></a>
+        <div class="bottom">
+            <a href="/accounts/logout/"><span>🚪</span> <span class="label">Logout</span></a>
+        </div>
+    </div>
+    <div id="contentTopbar" class="topbar">
+        <div class="title">API Dashboard</div>
+        <div class="user">Welcome, {{ user.username }} • <a style="color:#f59e0b" href="/accounts/logout/">Logout</a></div>
+    </div>
+    <div class="hero">
+        <h1 class="section-title">🚀 API Playground</h1>
+        <p class="subtitle">Your personal toolkit for everything digital! From QR codes to weather, jokes to currency - we've got you covered! 🎯</p>
+        <div class="hero-badges">
+            <span class="badge">✨ 10+ APIs</span>
+            <span class="badge">🔒 Secure</span>
+            <span class="badge">⚡ Fast</span>
+            <span class="badge">🎨 Beautiful</span>
+        </div>
+    </div>
+    <script>
+      function toggleSidebar(){
+        const sb = document.getElementById('sidebar');
+        const body = document.body;
+        const collapsed = sb.classList.toggle('collapsed');
+        if(collapsed){
+          body.classList.add('collapsed');
+        } else {
+          body.classList.remove('collapsed');
+        }
+      }
+    </script>
+
+    <div class="container">
+      <!-- Stats Overview -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <div class="stat-number" id="total_calls">0</div>
+            <div class="stat-label">API Calls</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔐</div>
+          <div class="stat-content">
+            <div class="stat-number" id="qr_generated">0</div>
+            <div class="stat-label">QR Codes</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🌍</div>
+          <div class="stat-content">
+            <div class="stat-number" id="user_city">Manila</div>
+            <div class="stat-label">Location</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-content">
+            <div class="stat-number" id="api_status">Online</div>
+            <div class="stat-label">Status</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- Original APIs -->
+        <div class="tile">
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 17c0 2 2 3 4 3 1.5 0 2.5-.5 4-2 1.5 1.5 2.5 2 4 2 2 0 4-1 4-3 0-4-3-8-8-8S4 13 4 17Z" stroke="#f59e0b" stroke-width="1.5"/><path d="M8 15c.5.7 1.6 1 2.5 1S12.5 15.7 13 15" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/></svg><h3>😂 Joke Generator</h3></div>
+          <p>Need a laugh? We've got dad jokes, puns, and everything in between! Perfect for breaking the ice or just having fun! 🎭</p>
+          <button class="btn-primary" onclick="getJoke()">🎪 Make Me Laugh!</button>
+          <div id="joke_result" class="result-box"></div>
+        </div>
+
+        <div class="tile">
+
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12h12" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round"/><path d="M8 8h8M10 16h4" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round"/></svg><h3>🔐 Secret Cipher</h3></div>
+          <p>Transform your messages into secret codes! Perfect for sending hidden messages to friends or just having fun with encryption! 🕵️‍♂️</p>
+          <div class="row">
+            <input type="text" id="cipher_text" placeholder="Type your secret message...">
+            <button class="btn-primary" onclick="generateCipher()">🔒 Encrypt It!</button>
+          </div>
+          <div id="cipher_result" class="result-box"></div>
+        </div>
+
+        <div class="tile">
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 6v-6h6" stroke="#34d399" stroke-width="1.5"/></svg><h3>📱 QR Magic</h3></div>
+          <p>Turn any text into a scannable QR code! Great for sharing links, contact info, or secret messages. Make it encrypted for extra security! 🎯</p>
+          <div class="row">
+            <input type="text" id="qr_text" placeholder="What should we encode?">
+            <label class="checkbox-label">
+              <input type="checkbox" id="qr_encrypt"> 🔐 Encrypt
+            </label>
+            <input type="number" id="qr_shift" value="3" style="width:60px" min="1" max="25" title="Shift amount"/>
+          </div>
+          <button class="btn-primary" onclick="generateQR()">✨ Create QR Code</button>
+          <div id="qr_result" class="result-box"></div>
+        </div>
+
+        <div class="tile">
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.3 2" stroke="#60a5fa" stroke-width="1.5" stroke-linecap="round"/></svg><h3>🌤️ Weather Wizard</h3></div>
+          <p>Check the weather anywhere in the world! Perfect for planning trips, deciding what to wear, or just satisfying your curiosity! 🌍</p>
+          <div class="row">
+            <input type="text" id="city" placeholder="Where are you curious about?">
+            <button class="btn-primary" onclick="getWeather()">🌡️ Check Weather</button>
+          </div>
+          <div id="weather_result" class="result-box"></div>
+        </div>
+
+
+        <!-- New API Features -->
+        <div class="tile">
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" stroke="#ef4444" stroke-width="1.5"/></svg><h3>📰 News Explorer</h3></div>
+          <p>Stay updated with the latest headlines! From tech breakthroughs to sports victories - get your daily dose of news! 📈</p>
+          <div class="row">
+            <select id="news_category" style="flex:1; padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,.08); color:#e5e7eb;">
+              <option value="technology">🚀 Technology</option>
+              <option value="business">💼 Business</option>
+              <option value="sports">⚽ Sports</option>
+              <option value="entertainment">🎬 Entertainment</option>
+            </select>
+            <button class="btn-primary" onclick="getNews()">📖 Read News</button>
+          </div>
+          <div id="news_result" class="result-box"></div>
+        </div>
+
+        <div class="tile">
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="#10b981" stroke-width="1.5" stroke-linecap="round"/></svg><h3>💰 Money Master</h3></div>
+          <p>Convert currencies in real-time! Perfect for travelers, online shoppers, or anyone dealing with international money! 🌍</p>
+          <div class="row">
+            <input type="number" id="currency_amount" placeholder="Amount" value="1" style="width:80px">
+            <select id="from_currency" style="flex:1; padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,.08); color:#e5e7eb;">
+              <option value="USD">🇺🇸 USD</option>
+              <option value="EUR">🇪🇺 EUR</option>
+              <option value="GBP">🇬🇧 GBP</option>
+              <option value="JPY">🇯🇵 JPY</option>
+              <option value="PHP">🇵🇭 PHP</option>
+            </select>
+            <select id="to_currency" style="flex:1; padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,.08); color:#e5e7eb;">
+              <option value="EUR">🇪🇺 EUR</option>
+              <option value="USD">🇺🇸 USD</option>
+              <option value="GBP">🇬🇧 GBP</option>
+              <option value="JPY">🇯🇵 JPY</option>
+              <option value="PHP">🇵🇭 PHP</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="convertCurrency()">💱 Convert Now</button>
+          <div id="currency_result" class="result-box"></div>
+        </div>
+
+        <div class="tile">
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#f59e0b" stroke-width="1.5"/></svg><h3>🔑 Password Factory</h3></div>
+          <p>Create ultra-secure passwords that even hackers can't crack! Customize length, symbols, and complexity for maximum security! 🛡️</p>
+          <div class="row">
+            <input type="number" id="password_length" placeholder="Length" value="12" min="4" max="50" style="width:80px">
+            <label class="checkbox-label">
+              <input type="checkbox" id="password_symbols" checked> 🔣 Symbols
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="password_numbers" checked> 🔢 Numbers
+            </label>
+          </div>
+          <button class="btn-primary" onclick="generatePassword()">⚡ Generate Password</button>
+          <div id="password_result" class="result-box"></div>
+        </div>
+
+        <div class="tile">
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 21h10a2 2 0 0 0 2-2V9.414a1 1 0 0 0-.293-.707l-5.414-5.414A1 1 0 0 0 12.586 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z" stroke="#8b5cf6" stroke-width="1.5"/></svg><h3>🎨 Color Wizard</h3></div>
+          <p>Create stunning color palettes for your designs! Perfect for web developers, designers, or anyone who loves beautiful colors! 🌈</p>
+          <div class="row">
+            <select id="palette_type" style="flex:1; padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,.08); color:#e5e7eb;">
+              <option value="complementary">🎯 Complementary</option>
+              <option value="triadic">🔺 Triadic</option>
+              <option value="analogous">🌊 Analogous</option>
+            </select>
+            <button class="btn-primary" onclick="generatePalette()">✨ Create Palette</button>
+          </div>
+          <div id="palette_result" class="result-box"></div>
+        </div>
+
+        <div class="tile">
+          <div class="head"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" stroke="#06b6d4" stroke-width="1.5"/></svg><h3>🌍 IP Detective</h3></div>
+          <p>Uncover the secrets behind any IP address! Find location, ISP, timezone, and more. Perfect for network troubleshooting or just curiosity! 🕵️‍♀️</p>
+          <div class="row">
+            <input type="text" id="ip_address" placeholder="Enter IP (or leave blank for yours)">
+            <button class="btn-primary" onclick="getIPInfo()">🔍 Investigate</button>
+          </div>
+          <div id="ip_result" class="result-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        function generateQR(){
+            let text = encodeURIComponent(document.getElementById('qr_text').value);
+            let enc = document.getElementById('qr_encrypt').checked;
+            let shift = document.getElementById('qr_shift').value || 3;
+            fetch(`/api/qr/?text=${text}&encrypt=${enc}&shift=${shift}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('qr_result').innerHTML = `<img src="data:image/png;base64,${data.qr_code}">`;
+            });
+        }
+
+        function generateCipher(){
+            let text = document.getElementById('cipher_text').value;
+            fetch(`/api/cipher/?text=${text}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('cipher_result').innerText = data.ciphertext;
+            });
+        }
+
+        function getWeather(){
+            let city = document.getElementById('city').value;
+            if (!city) {
+                document.getElementById('weather_result').innerHTML = '<div class="error-text">🌍 Please enter a city name!</div>';
+                return;
+            }
+            
+            const resultBox = document.getElementById('weather_result');
+            resultBox.innerHTML = '<div class="loading-text">🌤️ Checking the weather...</div>';
+            
+            fetch(`/api/weather/?city=${city}`)
+            .then(res => res.json())
+            .then(data => {
+                const weatherEmoji = getWeatherEmoji(data.weather[0].description);
+                resultBox.innerHTML = `
+                    <div class="weather-display">
+                        <div class="weather-emoji">${weatherEmoji}</div>
+                        <div class="weather-info">
+                            <div class="weather-city">${data.name}</div>
+                            <div class="weather-temp">${data.main.temp}°C</div>
+                            <div class="weather-desc">${data.weather[0].description}</div>
+                        </div>
+                    </div>
+                `;
+            })
+            .catch(() => {
+                resultBox.innerHTML = '<div class="error-text">🌧️ Weather service is having a cloudy day!</div>';
+            });
+        }
+
+        function getWeatherEmoji(description) {
+            const desc = description.toLowerCase();
+            if (desc.includes('sun') || desc.includes('clear')) return '☀️';
+            if (desc.includes('cloud')) return '☁️';
+            if (desc.includes('rain')) return '🌧️';
+            if (desc.includes('snow')) return '❄️';
+            if (desc.includes('storm')) return '⛈️';
+            if (desc.includes('fog') || desc.includes('mist')) return '🌫️';
+            return '🌤️';
+        }
+
+        function getJoke(){
+            const resultBox = document.getElementById('joke_result');
+            resultBox.innerHTML = '<div class="loading-text">🎭 Fetching a hilarious joke...</div>';
+            
+            fetch(`/api/joke/`)
+            .then(res => res.json())
+            .then(data => {
+                let jokeText = data.type === 'single' ? data.joke : `${data.setup} - ${data.delivery}`;
+                resultBox.innerHTML = `
+                    <div class="joke-display">
+                        <div class="joke-emoji">😂</div>
+                        <div class="joke-text">${jokeText}</div>
+                        <button onclick="getJoke()" class="joke-btn">🎪 Another One!</button>
+                    </div>
+                `;
+            })
+            .catch(() => {
+                resultBox.innerHTML = '<div class="error-text">😅 Oops! The joke service is taking a break!</div>';
+            });
+        }
+
+        // 2FA TOTP function removed for presentation
+
+        // New API functions
+        function getNews(){
+            const category = document.getElementById('news_category').value;
+            fetch(`/api/news/?category=${category}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.articles && data.articles.length > 0) {
+                    let html = '<div class="news-list">';
+                    data.articles.slice(0, 3).forEach(article => {
+                        html += `<div class="news-item">
+                            <h4>${article.title}</h4>
+                            <p>${article.description}</p>
+                        </div>`;
+                    });
+                    html += '</div>';
+                    document.getElementById('news_result').innerHTML = html;
+                } else {
+                    document.getElementById('news_result').innerText = 'No news available';
+                }
+            });
+        }
+
+        function convertCurrency(){
+            const amount = document.getElementById('currency_amount').value;
+            const from = document.getElementById('from_currency').value;
+            const to = document.getElementById('to_currency').value;
+            
+            fetch(`/api/currency/?from=${from}&to=${to}&amount=${amount}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.error) {
+                    document.getElementById('currency_result').innerText = data.error;
+                } else {
+                    document.getElementById('currency_result').innerHTML = `
+                        <div class="currency-result">
+                            <div class="conversion">${data.amount} ${data.from} = ${data.converted} ${data.to}</div>
+                            <div class="rate">Rate: 1 ${data.from} = ${data.rate} ${data.to}</div>
+                        </div>`;
+                }
+            });
+        }
+
+        function generatePassword(){
+            const length = document.getElementById('password_length').value;
+            const symbols = document.getElementById('password_symbols').checked;
+            const numbers = document.getElementById('password_numbers').checked;
+            
+            fetch(`/api/password/?length=${length}&symbols=${symbols}&numbers=${numbers}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('password_result').innerHTML = `
+                    <div class="password-result">
+                        <div class="password-display">${data.password}</div>
+                        <div class="password-info">Length: ${data.length} | Strength: ${data.strength}</div>
+                        <button onclick="copyToClipboard('${data.password}')" class="copy-btn">Copy</button>
+                    </div>`;
+            });
+        }
+
+        function generatePalette(){
+            const type = document.getElementById('palette_type').value;
+            fetch(`/api/colors/?type=${type}`)
+            .then(res => res.json())
+            .then(data => {
+                let html = '<div class="palette-display">';
+                data.colors.forEach(color => {
+                    html += `<div class="color-swatch" style="background-color: ${color}" title="${color}"></div>`;
+                });
+                html += '</div>';
+                document.getElementById('palette_result').innerHTML = html;
+            });
+        }
+
+        function getIPInfo(){
+            const ip = document.getElementById('ip_address').value;
+            const url = ip ? `/api/ip-info/?ip=${ip}` : '/api/ip-info/';
+            
+            fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if(data.error) {
+                    document.getElementById('ip_result').innerText = data.error;
+                } else {
+                    document.getElementById('ip_result').innerHTML = `
+                        <div class="ip-info">
+                            <div><strong>IP:</strong> ${data.query}</div>
+                            <div><strong>Location:</strong> ${data.city}, ${data.country}</div>
+                            <div><strong>ISP:</strong> ${data.isp}</div>
+                            <div><strong>Timezone:</strong> ${data.timezone}</div>
+                        </div>`;
+                }
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show feedback
+                const btn = event.target;
+                const original = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = original, 2000);
+            });
+        }
+
+        // Load user stats on page load
+        function loadUserStats() {
+            fetch('/api/stats/')
+            .then(res => res.json())
+            .then(data => {
+                if(data.total_api_calls !== undefined) {
+                    document.getElementById('total_calls').textContent = data.total_api_calls;
+                }
+                if(data.qr_codes_generated !== undefined) {
+                    document.getElementById('qr_generated').textContent = data.qr_codes_generated;
+                }
+                if(data.preferred_city) {
+                    document.getElementById('user_city').textContent = data.preferred_city;
+                }
+            })
+            .catch(() => {
+                // Handle unauthenticated users gracefully
+                document.getElementById('api_status').textContent = 'Demo';
+            });
+        }
+
+        // Load stats when page loads
+        document.addEventListener('DOMContentLoaded', loadUserStats);
+    </script>
+</body>
+</html>

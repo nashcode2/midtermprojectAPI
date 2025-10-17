@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting…</title>
+    <meta http-equiv="refresh" content="0;url={{ process_url }}" />
+    <style>
+        body { font-family: Inter, Arial, sans-serif; background:#f8fafc; color:#0f172a; display:flex; align-items:center; justify-content:center; height:100vh; }
+        .box { background:#ffffff; padding:24px 28px; border-radius:12px; box-shadow:0 10px 26px rgba(2,6,23,.12); text-align:center; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>Taking you to {{ provider.name }}…</h3>
+        <p>If you are not redirected, <a href="{{ process_url }}">continue</a>.</p>
+    </div>
+</body>
+</html>
+
+

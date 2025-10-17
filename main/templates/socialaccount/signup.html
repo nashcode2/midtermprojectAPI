@@ -1,0 +1,32 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% trans "Complete Social Signup" %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+</head>
+<body class="dash-wrap">
+  <div class="topbar">
+    <div class="title">Finish sign up</div>
+    <div class="user"><a style="color:#f59e0b" href="/accounts/login/">Back to login</a></div>
+  </div>
+
+  <div class="container" style="padding:22px; color:#e5e7eb; display:flex; justify-content:center;">
+    <div class="tile" style="max-width:520px; width:100%;">
+      <p class="hint">You're almost there. Confirm your details to create your account.</p>
+      {% if form.errors %}
+        <div class="hint" style="color:#fca5a5; margin-top:8px;">{% trans "Please correct the errors below." %}</div>
+      {% endif %}
+      <form method="post" action="{% url 'socialaccount_signup' %}" style="margin-top:12px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn-primary" type="submit">{% trans "Sign Up" %}</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+
+

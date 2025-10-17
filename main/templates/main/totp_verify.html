@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>2FA Verify</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+</head>
+<body class="dash-wrap">
+  <div class="topbar">
+    <div class="title">Verify 2FA</div>
+    <div class="user"><a style="color:#f59e0b" href="/api/settings/">Back</a></div>
+  </div>
+  <div class="container" style="padding:22px; color:#e5e7eb;">
+    <div class="tile" style="max-width:420px;">
+      {% if message %}<div class="hint" style="color:#fca5a5;">{{ message }}</div>{% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <label>Authenticator code</label>
+        <input type="text" name="code" placeholder="123456" required>
+        <button class="btn-primary" type="submit" style="margin-top:10px;">Verify</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+

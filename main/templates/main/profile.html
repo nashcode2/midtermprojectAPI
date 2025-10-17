@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+</head>
+<body class="dash-wrap">
+    <div class="topbar">
+        <div class="title">Profile</div>
+        <div class="user">{{ user.username }} • <a style="color:#f59e0b" href="/accounts/logout/">Logout</a></div>
+    </div>
+    <div class="container" style="padding:22px; color:#e5e7eb;">
+        <div class="tile" style="max-width:520px;">
+            <h3>Account</h3>
+            <p class="hint">Basic info</p>
+            <div style="margin-top:12px;">
+                <div><strong>Username:</strong> {{ user.username }}</div>
+                <div style="margin-top:6px;"><strong>Email:</strong> {{ user.email|default:'—' }}</div>
+                <div style="margin-top:6px;"><strong>Joined:</strong> {{ user.date_joined }}</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

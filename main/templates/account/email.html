@@ -1,0 +1,35 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% trans "Manage Email" %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+</head>
+<body class="dash-wrap">
+  <div class="topbar">
+    <div class="title">Emails</div>
+    <div class="user"><a style="color:#f59e0b" href="/api/settings/">Settings</a></div>
+  </div>
+  <div class="container" style="padding:22px; color:#e5e7eb;">
+    <div class="tile">
+      <h3>{% trans "E-mail Addresses" %}</h3>
+      <form method="post" action="{% url 'account_email' %}" style="margin-top:12px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn-primary" type="submit">{% trans "Add Email" %}</button>
+      </form>
+      {% if emailaddresses %}
+        <ul style="margin-top:14px;">
+          {% for emailaddress in emailaddresses %}
+            <li>{{ emailaddress.email }} {% if emailaddress.verified %}(verified){% else %}(unverified){% endif %}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
+
+

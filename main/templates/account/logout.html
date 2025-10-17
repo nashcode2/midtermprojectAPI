@@ -1,0 +1,27 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% trans "Sign Out" %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+</head>
+<body class="dash-wrap">
+  <div class="topbar">
+    <div class="title">Sign out</div>
+    <div class="user"><a style="color:#f59e0b" href="/api/dashboard/">Back to dashboard</a></div>
+  </div>
+  <div class="container" style="padding:22px; color:#e5e7eb;">
+    <div class="tile" style="max-width:520px;">
+      <h3>{% trans "Are you sure you want to sign out?" %}</h3>
+      <form method="post" action="{% url 'account_logout' %}" style="margin-top:12px;">
+        {% csrf_token %}
+        <button class="btn-primary" type="submit">{% trans "Sign Out" %}</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+
+

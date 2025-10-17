@@ -1,0 +1,31 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% trans "Account Connections" %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+</head>
+<body class="dash-wrap">
+  <div class="topbar">
+    <div class="title">Connected accounts</div>
+    <div class="user"><a style="color:#f59e0b" href="/api/settings/">Settings</a></div>
+  </div>
+  <div class="container" style="padding:22px; color:#e5e7eb;">
+    <div class="tile">
+      {% if form.accounts %}
+        <form method="post" action="{% url 'socialaccount_connections' %}">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button class="btn-primary" type="submit">{% trans "Remove" %}</button>
+        </form>
+      {% else %}
+        <p class="hint">No connected accounts</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
+
+

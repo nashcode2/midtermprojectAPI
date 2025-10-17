@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+    <style>
+        body { font-family: Inter, Arial, sans-serif; color:#0f172a; min-height:100vh; display:flex; align-items:center; justify-content:center; }
+        .box { background:#ffffff; padding:36px; border-radius:16px; width:420px; box-shadow: 0 15px 40px rgba(2,6,23,.12); position: relative; }
+        .box h1 { margin:0 0 6px 0; font-size:22px; font-weight:800; color:#111827; }
+        .box p.sub { margin:0 0 18px 0; color:#6b7280; font-size:13px; }
+        label { display:block; margin:12px 0 6px; font-size:13px; color:#374151; }
+        input { width:100%; padding:12px 14px; border-radius:10px; border:1px solid #e5e7eb; background:#ffffff; color:#111827; }
+        input:focus { outline:2px solid #a78bfa; border-color:#a78bfa; }
+        .btn { width:100%; margin-top:14px; padding:12px 14px; background:#6d28d9; border:none; color:#ffffff; font-weight:700; border-radius:10px; cursor:pointer; box-shadow: 0 8px 18px rgba(109,40,217,.25); }
+        .btn:hover { filter: brightness(1.05); }
+        .oauth { display:flex; gap:10px; margin-top:14px; flex-direction:column; }
+        .oauth a { display:flex; align-items:center; gap:8px; justify-content:center; padding:10px 12px; border-radius:10px; background:#f3f4f6; color:#111827; text-decoration:none; border:1px solid #e5e7eb; }
+        .oauth a:hover { background:#eef2ff; border-color:#c7d2fe; }
+        .footer { text-align:center; margin-top:12px; font-size:12px; color:#6b7280; }
+        .forgot { float:right; font-size:12px; color:#7c3aed; text-decoration:none; }
+    </style>
+    {% load socialaccount %}
+    {% providers_media_js %}
+    {% load account %}
+    {% load i18n %}
+    {% load static %}
+</head>
+<body class="dash-wrap">
+    <div class="box">
+        <h1>Hi, Welcome back 👋</h1>
+        <p class="sub">Please log in with your credentials</p>
+        <form method="post" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            <label>Email or username</label>
+            <input type="text" name="login" placeholder="you@example.com" required>
+            <label>Password <a class="forgot" href="#" onclick="alert('Demo: password reset not set up in dev');return false;">Forgot password?</a></label>
+            <input type="password" name="password" placeholder="••••••••" required>
+            <button class="btn" type="submit">Sign In</button>
+        </form>
+        <div class="footer" style="margin-top:16px;">Social login</div>
+        <div class="oauth">
+            {% if social_google_enabled %}
+            <a class="social-btn social-google" href="{% provider_login_url 'google' %}">
+                <svg class="icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="#EA4335" d="M24 9.5c3.54 0 6.72 1.22 9.23 3.6l6.9-6.9C35.9 2.1 30.3 0 24 0 14.6 0 6.2 5.4 2.5 13.2l8 6.2C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-2.7-.4-3.9H24v7.4h12.9c-.3 2.1-1.8 5.3-5.2 7.5l8 6.2c4.7-4.3 6.8-10.6 6.8-17.2z"/><path fill="#FBBC05" d="M10.5 28.9c-1-2.9-1-6.1 0-9l-8-6.2c-3.3 6.6-3.3 14.8 0 21.4l8-6.2z"/><path fill="#34A853" d="M24 48c6.3 0 11.6-2.1 15.5-5.8l-8-6.2c-2.1 1.4-5 2.3-7.5 2.3-5.7 0-10.6-3.9-12.3-9.1l-8 6.2C6.4 42.6 14.6 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+                Continue with Google
+            </a>
+            {% else %}
+            <a class="social-btn disabled" href="#" title="Configure GOOGLE_CLIENT_ID/SECRET env vars or via Admin">
+                Continue with Google (not configured)
+            </a>
+            {% endif %}
+
+            {% if social_facebook_enabled %}
+            <a class="social-btn social-facebook" href="{% provider_login_url 'facebook' %}">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
+                </svg>
+                Continue with Facebook
+            </a>
+            {% else %}
+            <a class="social-btn disabled" href="#" title="Configure Facebook in Admin: add SocialApp for Site 1">
+                Continue with Facebook (not configured)
+            </a>
+            {% endif %}
+        </div>
+        <div class="footer">Don't have an account? <a href="{% url 'account_signup' %}" style="color:#7c3aed;">Create one</a></div>
+    </div>
+</body>
+</html>

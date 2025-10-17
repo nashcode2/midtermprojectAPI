@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}?v=2">
+</head>
+<body class="dash-wrap">
+    <div class="topbar">
+        <div class="title">Settings</div>
+        <div class="user">{{ user.username }} • <a style="color:#f59e0b" href="/accounts/logout/">Logout</a></div>
+    </div>
+    <div class="container" style="padding:22px; color:#e5e7eb;">
+        <div class="grid">
+            <div class="tile">
+                <h3>Appearance</h3>
+                <p class="hint">Theme options (demo)</p>
+                <button class="btn-primary" onclick="alert('Demo: theme switching coming soon')">Switch Theme</button>
+            </div>
+            <div class="tile">
+                <h3>Security</h3>
+                <p class="hint">Manage your account security</p>
+                <a class="btn-primary" href="/accounts/password/change/">Change Password</a>
+            </div>
+            <div class="tile">
+                <h3>Two-Factor Authentication (TOTP)</h3>
+                <p class="hint">Add a 6‑digit code from Google Authenticator</p>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+                    <a class="btn-primary" href="/api/2fa/setup/">Set up</a>
+                    <a class="btn-primary" href="/api/2fa/verify/">Verify code</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -33,6 +33,27 @@ from django.conf import settings
 from django.contrib import messages
 from django.urls import reverse
 import urllib.parse
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# Custom view for social account authentication errors
+def social_account_error(request, provider=None):
+    """
+    Handle social account authentication errors with better debugging
+    """
+    context = {
+        'provider': provider or 'Unknown',
+        'debug': settings.DEBUG,
+        'exception': request.GET.get('error', 'Authentication failed'),
+        'error_description': request.GET.get('error_description', ''),
+    }
+    
+    # Log the error for debugging
+    logger.error(f"Social auth error for provider {provider}: {context['exception']}")
+    
+    return render(request, 'socialaccount/authentication_error.html', context)
 
 # Dashboard view
 

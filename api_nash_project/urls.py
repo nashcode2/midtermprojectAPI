@@ -19,12 +19,24 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import HttpResponse
+
+def data_deletion(request):
+    return HttpResponse("""
+        <h1>Data Deletion Instructions</h1>
+        <p>If you wish to delete your data from this app, please contact us at example@email.com.
+        Your data will be permanently deleted within 7 days.</p>
+    """)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('main.urls')),
     path('accounts/', include('allauth.urls')),
     path('', RedirectView.as_view(url='/api/', permanent=False)),
+    path('data-deletion/', data_deletion, name='data_deletion'),
+    # Handle Facebook OAuth completion redirect
+    path('complete/facebook/', RedirectView.as_view(url='/accounts/facebook/login/callback/', permanent=False)),
 ]
 
 # Serve static and media files during development

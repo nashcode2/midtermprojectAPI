@@ -15,51 +15,84 @@
 1. In your app dashboard, click "Add Product" → "Facebook Login"
 2. Go to Facebook Login → Settings
 3. Add Valid OAuth Redirect URIs:
-   - `http://127.0.0.1:8000/accounts/facebook/login/callback/`
-   - `http://localhost:8000/accounts/facebook/login/callback/`
+   - `https://your-ngrok-domain.ngrok-free.dev/accounts/facebook/login/callback/` (for ngrok)
+   - `https://your-production-domain.com/accounts/facebook/login/callback/` (for production)
+   - `http://localhost:8000/accounts/facebook/login/callback/` (for local testing)
+   - `http://127.0.0.1:8000/accounts/facebook/login/callback/` (for local testing)
+
+4. Make sure "Enforce HTTPS" is set to Yes
+
+5. In App Domains (Settings → Basic), add:
+   - `your-ngrok-domain.ngrok-free.dev`
+   - `localhost`
+   - `127.0.0.1`
+   - `your-production-domain.com` (when ready for production)
 
 ### 3. Get App Credentials
 1. Go to Settings → Basic
 2. Copy your App ID and App Secret
 
 ### 4. Set Environment Variables
-Create a `.env` file in your project root (`C:\Users\nashn\Desktop\api_project\.env`):
+Create a `.env` file in your project root:
 ```
+# Facebook OAuth Settings
 FACEBOOK_APP_ID=your_facebook_app_id_here
 FACEBOOK_APP_SECRET=your_facebook_app_secret_here
+FACEBOOK_REDIRECT_URI=https://your-ngrok-domain.ngrok-free.dev/accounts/facebook/login/callback/
 
 # Optional: Set Google too if you have it
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 # Optional: override Django secret key
-DJANGO_SECRET_KEY=dev-secret-key
+DJANGO_SECRET_KEY=your-secret-key-here
 ```
 
-### 5. Enable Facebook Provider
-1. Uncomment Facebook provider in `api_nash_project/settings.py`:
-   ```python
-   'allauth.socialaccount.providers.facebook',
-   ```
+### 5. Run the OAuth Setup Script
+```bash
+python setup_oauth.py
+```
 
-2. Uncomment Facebook config in `SOCIALACCOUNT_PROVIDERS`
+This script will:
+- Configure the Site domain correctly
+- Create/update SocialApp entries for Facebook and Google
+- Associate the apps with your site
 
-3. Uncomment Facebook setup code in `main/signals.py`
+### 6. Important Settings for HTTPS
+The following settings are already configured in `api_nash_project/settings.py`:
+```python
+# Force HTTPS for OAuth security with ngrok
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+SOCIALACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+SOCIALACCOUNT_CALLBACK_URL_PROTOCOL = 'https'
+```
 
-4. Update `main/context.py` to enable Facebook:
-   ```python
-   has_facebook = SocialApp.objects.filter(provider='facebook').exists()
-   ```
+These ensure Facebook OAuth works correctly with ngrok by generating HTTPS URLs.
 
-### 6. Restart Server
+### 7. Start Server and Test
 ```bash
 python manage.py runserver
 ```
 
-## Current Status: Facebook Login is DISABLED
-- The app works perfectly without Facebook login
-- Only Google login and regular email/password login are enabled
-- No more "Invalid App ID" errors
+## Using Facebook Login
+1. Start ngrok in a separate terminal:
+   ```bash
+   ngrok http 8000
+   ```
+   
+2. **Important:** Always use the HTTPS ngrok URL:
+   ```
+   https://your-ngrok-domain.ngrok-free.dev/accounts/login/
+   ```
+   
+3. Click "Continue with Facebook" to test the login flow
+
+## Troubleshooting
+If you see "insecure page" errors:
+1. Make sure you're accessing via HTTPS, not HTTP
+2. Ensure your ngrok domain is added to App Domains in Facebook
+3. Verify the exact redirect URI is in Facebook's Valid OAuth Redirect URIs
 
 ## To Test Current Login Options:
 1. Regular signup/login with email and password

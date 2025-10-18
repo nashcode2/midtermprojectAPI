@@ -30,7 +30,13 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-tm)ud78e%fl-3&%km_%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    '127.0.0.1', 
+    'localhost',
+    'pseudophilanthropic-vanda-hatlike.ngrok-free.dev',
+    '.ngrok-free.dev',  # Allow any ngrok subdomain
+    '.ngrok.io',        # Allow legacy ngrok domains
+]
 
 
 # Application definition
@@ -80,15 +86,23 @@ SOCIALACCOUNT_PROVIDERS = {
             'name',
             'name_format',
             'picture',
-            'short_name'
+            'short_name',
+            'email'
         ],
         'EXCHANGE_TOKEN': True,
-        'LOCALE_FUNC': 'path.to.callable',
         'VERIFIED_EMAIL': False,
         'VERSION': 'v7.0',
     }
 }
+
+# Social account settings
 SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+
+# Force HTTPS for social auth callbacks
+SOCIALACCOUNT_CALLBACK_URL_PROTOCOL = 'https'
 
 # Simplify signup for development: no real email sending
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -117,16 +131,25 @@ FACEBOOK_REDIRECT_URI = os.getenv(
 # Comma-separated scopes used by the manual Facebook flow
 FACEBOOK_SCOPES = os.getenv('FACEBOOK_SCOPES', 'public_profile,email')
 
+# Google OAuth settings
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "allauth.account.middleware.AccountMiddleware",  # <-- add this
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Force HTTPS settings for allauth/OAuth security
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+SOCIALACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 ROOT_URLCONF = 'api_nash_project.urls'
 
 TEMPLATES = [
@@ -200,10 +223,12 @@ STATICFILES_DIRS = [
     BASE_DIR / 'main' / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-CSRF_TRUSTED__ORIGINS = [
+CSRF_TRUSTED_ORIGINS = [
     'https://localhost:8000',
     'https://127.0.0.1',
+    'https://pseudophilanthropic-vanda-hatlike.ngrok-free.dev',
 ]
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
